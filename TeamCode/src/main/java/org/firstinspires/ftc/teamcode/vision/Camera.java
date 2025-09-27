@@ -17,6 +17,8 @@ public class Camera {
     private static AprilTagProcessor.Builder myAprilTagProcessorBuilder;
     private static VisionPortal.Builder myVisionPortalBuilder;
     private static VisionPortal myVisionPortal;
+    public static MotifDetection MotifDetector;
+    public static DepotScan robotLocator;
 
     Camera() {
         myVisionPortalBuilder = new VisionPortal.Builder();
@@ -25,7 +27,7 @@ public class Camera {
         myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
         myApriltagProcessor = (myAprilTagProcessorBuilder.build());
         myVisionPortalBuilder.addProcessor(myApriltagProcessor);
-        MotifDetection MotifDetector = new MotifDetection(myVisionPortal, myApriltagProcessor);
-        DepotScan robotLocator = new DepotScan(myVisionPortal, myApriltagProcessor);
+        MotifDetector = new MotifDetection(myVisionPortal, myApriltagProcessor);
+        robotLocator = new DepotScan(myVisionPortal, myApriltagProcessor);
     }
 }
