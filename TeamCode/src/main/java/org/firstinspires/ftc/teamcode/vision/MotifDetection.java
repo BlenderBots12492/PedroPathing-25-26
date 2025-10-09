@@ -18,7 +18,6 @@ public class MotifDetection {
     private static AprilTagProcessor.Builder myAprilTagProcessorBuilder;
     private static VisionPortal.Builder myVisionPortalBuilder;
     private static VisionPortal myVisionPortal;
-    // Describe this function...
     private void initializeVisionPortal(){
         myVisionPortalBuilder = new VisionPortal.Builder();
         myVisionPortal = (myVisionPortalBuilder.build());
@@ -28,7 +27,6 @@ public class MotifDetection {
         myVisionPortalBuilder.addProcessor(myApriltagProcessor);
     }
 
-    // Describe this function...
     private static ArrayList<AprilTagDetection> getVisionPortalData(){
         int[] MotifIds = {21, 22, 23};
         myAprilTagDetections = (myApriltagProcessor.getDetections());
