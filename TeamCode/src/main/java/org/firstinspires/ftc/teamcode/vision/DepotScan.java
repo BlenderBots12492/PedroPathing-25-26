@@ -66,7 +66,7 @@ public class DepotScan {
 
         return new Pose3D(AvgPos, A.getOrientation());
     }
-    public static Pose3D findPos(char side) { //Side is 'R' or 'B' red depot side or blue depot side NOT TEAM SIDES exception will be thrown otherwise.
+    public static Pose3D findPos() { //Side is 'R' or 'B' red depot side or blue depot side NOT TEAM SIDES exception will be thrown otherwise.
         ArrayList<AprilTagDetection> depots = search_for_depot();
         ArrayList<Pose3D> PossiblePositions = new ArrayList<Pose3D>();
         if (depots.size() > 1) {

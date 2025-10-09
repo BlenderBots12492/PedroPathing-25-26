@@ -20,7 +20,7 @@ public class Camera {
     public static MotifDetection MotifDetector;
     public static DepotScan robotLocator;
 
-    Camera() {
+    public Camera() {
         myVisionPortalBuilder = new VisionPortal.Builder();
         myVisionPortal = (myVisionPortalBuilder.build());
         myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "webcam 1"));
