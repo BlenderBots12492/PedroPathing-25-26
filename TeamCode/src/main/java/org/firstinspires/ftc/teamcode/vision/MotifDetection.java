@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -30,7 +29,6 @@ public class MotifDetection {
     private static ArrayList<AprilTagDetection> getVisionPortalData(){
         int[] MotifIds = {21, 22, 23};
         myAprilTagDetections = (myApriltagProcessor.getDetections());
-        telemetry.update();
         ArrayList<AprilTagDetection> DetectedMotifs = new ArrayList();
         for (AprilTagDetection myAprilTagDetection2 : myAprilTagDetections) {
             myAprilTagDetection = myAprilTagDetection2;

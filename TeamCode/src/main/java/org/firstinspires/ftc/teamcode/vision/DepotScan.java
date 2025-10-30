@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.vision;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+import androidx.annotation.Nullable;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -29,18 +31,17 @@ public class DepotScan {
         myVisionPortalBuilder.addProcessor(myApriltagProcessor);
     }
 
-    // Describe this function...
-    public static ArrayList<AprilTagDetection> search_for_depot(){
+    @Nullable
+    public static AprilTagDetection search_for_depot(){
         int[] DepotIds = {20, 24};
         myAprilTagDetections = (myApriltagProcessor.getDetections());
-        ArrayList<AprilTagDetection> DetectedMotifs = new ArrayList();
-        for (AprilTagDetection myAprilTagDetection2 : myAprilTagDetections) {
-            myAprilTagDetection = myAprilTagDetection2;
-            if (Arrays.asList(DepotIds).contains(myAprilTagDetection.id)) {
-                DetectedMotifs.add(myAprilTagDetection);
+        ArrayList<AprilTagDetection> DetectedMotifs = new ArrayList<AprilTagDetection>();
+        for (AprilTagDetection myAprilTagDetection : myAprilTagDetections) {
+            if (myAprilTagDetection.id == 20 || myAprilTagDetection.id == 24) {
+                return myAprilTagDetection;
             }
         }
-        return DetectedMotifs;
+        return null;
     }
 
 
@@ -66,13 +67,12 @@ public class DepotScan {
 
         return new Pose3D(AvgPos, A.getOrientation());
     }
-    public static Pose3D findPos() {
-        ArrayList<AprilTagDetection> depots = search_for_depot();
-        ArrayList<Pose3D> PossiblePositions = new ArrayList<Pose3D>();
-        if (depots.size() > 1) {
-            return averagePose3D(depots.get(0).robotPose, depots.get(1).robotPose);
+    public Pose3D findPos(Pose3D position) {
+        AprilTagDetection depot = search_for_depot();
+        if (depot != null) {
+            return depot.robotPose;
         } else {
-            return depots.get(0).robotPose;
+            return position;
         }
     }
 }
