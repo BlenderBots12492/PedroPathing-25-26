@@ -22,30 +22,41 @@ import org.firstinspires.ftc.teamcode.tools.tools;
 @Autonomous(name="Red Auto")
 public class Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
+
+        //prep for op mode
         Robot bot = new Robot(hardwareMap);
+
+        //set up camera
         bot.initilizeCamera();
+        //set up math to make it move
         bot.initilizePedroPathing(tools.Team.RED);
-        PathChain initialLaunchPath = null;
+
+        PathChain initialLaunchPath;
         while (opModeInInit()) {
-            bot.follower.update();
             Pose position = bot.getPosition();
-            telemetry.addData("Z", bot.vision.getLastPosition() != null);
+            telemetry.addData("Position Updated", bot.vision.getLastPosition() != null);
             telemetry.addData("Vx", bot.vision.getLastPosition().getPosition().x);
             telemetry.addData("Vy", bot.vision.getLastPosition().getPosition().y);
             telemetry.addData("x", position.getX());
             telemetry.addData("y", position.getY());
             telemetry.addData("heading", position.getHeading());
             telemetry.update();
+            bot.follower.update();
 
         }
         initialLaunchPath = bot.follower.pathBuilder()
                 .addPath(new BezierLine(bot.follower.getPose(), bot.scorePose))
                 .setLinearHeadingInterpolation(bot.follower.getHeading(), bot.scorePose.getHeading())
                 .build();
+
+        //start opMode
         waitForStart();
         bot.startWheels();
+        //move according to path
         bot.follower.followPath(initialLaunchPath, true);
+        //launch
         for (int i = 0; i < 3; i++) {
+            //while robot busy and ready
             while (bot.follower.isBusy() && bot.launchState == Robot.launchStatus.READY) {
                 bot.follower.update();
             }

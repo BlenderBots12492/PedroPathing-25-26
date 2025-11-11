@@ -19,6 +19,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.PathConstraints;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -43,7 +44,7 @@ import java.util.concurrent.Callable;
 public class Robot {
     private class checkLaunchStatusThread extends Thread {
         public void run() {
-            while (launchState != launchStatus.READY || launchState != launchStatus.IDLE) {
+            while (launchState != launchStatus.READY) {
                 if (abs(launchWheelLeft.getVelocity()) >= TARGETVELOCITY-VELOCITYTOLORANCE || abs(launchWheelRight.getVelocity()) >= TARGETVELOCITY-VELOCITYTOLORANCE) {
                     launchState = launchStatus.READY;
                 }
@@ -58,7 +59,6 @@ public class Robot {
             myControlHubVoltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
             boolean launchEnabled = true;
             while (true) {
-                updatePosition();
                 double presentVoltage = myControlHubVoltageSensor.getVoltage();
                 if (8 >= presentVoltage) {
                     launchEnabled = false;
@@ -93,8 +93,8 @@ public class Robot {
     public VisionThread vision;
     public Camera cam;
     public Servo launchAngleServo;
-    public Servo launchBlocker;
-    public int TARGETVELOCITY = 700;
+    public CRServo feeder;
+    public int TARGETVELOCITY = 800;
     public int VELOCITYTOLORANCE = 10;
     public enum launchStatus {
         LAUNCHING,
@@ -103,7 +103,7 @@ public class Robot {
         SPEEDING_UP
     }
     public launchStatus launchState;
-    public void startWheels() {
+    public void startWheels() { //Starts up launch
         launchState = launchStatus.SPEEDING_UP;
         launchWheelLeft.setVelocity(TARGETVELOCITY);
         launchWheelRight.setVelocity(TARGETVELOCITY);
@@ -111,31 +111,30 @@ public class Robot {
         checkLaunchStatusThread thread = new checkLaunchStatusThread();
         thread.start();
     }
-    public boolean launch() {
-        if (launchState != launchStatus.READY) {
+    public boolean launch() { //runs feeding mechanism
+        /*if (launchState != launchStatus.READY) {
             return false;
-        }
+        }*/
         launchState = launchStatus.LAUNCHING;
-        launchBlocker.setPosition(0);
-        SystemClock.sleep(200);
-        block();
+        feeder.setPower(-30);/*
         checkLaunchStatusThread thread = new checkLaunchStatusThread();
-        thread.start();
+        thread.start();*/
         return true;
     }
-    public void stopWheels() {
+    public void stopWheels() { //stops launch wheels
         launchWheelLeft.setVelocity(0);
         launchWheelRight.setVelocity(0);
         launchState = launchStatus.IDLE;
     }
-    public void block() {
-        launchBlocker.setPosition(0.55);
+    public void block() { // blocks ball using feeder mechanism
+        //none
+        feeder.setPower(0);
     }
-    public void intake() {
+    public void intake() { //turns on/off the intake
         if (intake.getPower() > 0.5) {
             intake.setPower(0);
         } else {
-            intake.setPower(1);
+            intake.setPower(0.6);
         }
     }
 
@@ -150,13 +149,13 @@ public class Robot {
         frontRight.setPower(frontRightPwr);
     }
     HardwareMap hardwareMap;
-    public Robot(HardwareMap HWMap) {
+    public Robot(HardwareMap HWMap) { // initialize parts of robot
         hardwareMap = HWMap;
         //initilizeCamera();
         initilizeMotors();
         initilizeServos();
     }
-    public void initilizeMotors() {
+    public void initilizeMotors() { // initilize motors
         backLeft = hardwareMap.get(DcMotor.class, "leftBack");
         frontLeft = hardwareMap.get(DcMotor.class, "leftFront");
         backRight = hardwareMap.get(DcMotor.class, "rightBack");
@@ -199,11 +198,11 @@ public class Robot {
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
     public PathChain[] pickUpPaths;
-    public void initilizePedroPathing(tools.Team team) {
+    public void initilizePedroPathing(tools.Team team) { // initialize Pedro Pathing
         follower = Constants.createFollower(hardwareMap);
 
         if (team == tools.Team.RED) {
-            scorePose = new Pose(-24, 18.9, Math.toRadians(45));
+            scorePose = new Pose(-21.8118, 17.1651, 0.6689);
             pickUpPaths = new PathChain[]{
                     follower.pathBuilder().addPath(new BezierLine(scorePose, pickup1Pose))
                             .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
@@ -236,12 +235,13 @@ public class Robot {
             };
         }
     }
-    public void initilizeServos() {
+    public void initilizeServos() { // initilize the servos
         launchAngleServo = hardwareMap.get(Servo.class, "launchAngleServo");
-        launchBlocker = hardwareMap.get(Servo.class, "blocker");
+        feeder = hardwareMap.get(CRServo.class, "blocker");
         //launchAngleServo.setPosition(0.545); //0.2= lateral; 0.5 = higher angle
     }
-    public Void updatePosition() {
+
+    public Void updatePosition() { //updates the position
         Pose3D visionPosition = vision.getLastPosition();
         if (visionPosition != visionLastPosition) {
             visionLastPosition = visionPosition;
@@ -250,13 +250,13 @@ public class Robot {
         }
         return null;
     }
-    public void initilizeCamera() {
+    public void initilizeCamera() { // initilize camera
         cam = new Camera(hardwareMap);
         vision = new VisionThread(cam);
         vision.start();
     }
     private Pose3D visionLastPosition;
-    public Pose getPosition() {
+    public Pose getPosition() { // get current position
         Pose3D visionPosition = vision.getLastPosition();
         if (visionPosition != visionLastPosition && visionPosition != null) {
             visionLastPosition = visionPosition;
@@ -267,7 +267,7 @@ public class Robot {
         return follower.getPose();
     }
 
-    public void changeAngle(double speed) {
+    public void changeAngle(double speed) { // change the launch angle
         launchAngleServo.setPosition(launchAngleServo.getPosition()+(speed/100));
     }
 }

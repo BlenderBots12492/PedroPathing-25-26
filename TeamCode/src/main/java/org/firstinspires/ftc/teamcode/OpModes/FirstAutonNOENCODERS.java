@@ -15,12 +15,11 @@ public class FirstAutonNOENCODERS extends LinearOpMode {
     private Robot bot;
     public void runOpMode() {
         bot = new Robot(hardwareMap);
-        bot.checkVoltage();
         runtime = new ElapsedTime();
         waitForStart();
         runtime.reset();
         bot.setPowers(-0.75, 0, 0);
-        sleep(7000);
+        sleep(2000);
         bot.setPowers(0, 0, 0);
     }
 }

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+//checkng motifs isnt used yet
 public class MotifDetection {
     private static ArrayList<AprilTagDetection> myAprilTagDetections;
     private static AprilTagDetection myAprilTagDetection;
@@ -40,6 +41,7 @@ public class MotifDetection {
     }
 
 
+
     MotifDetection() {
         initializeVisionPortal();
     }
@@ -47,6 +49,7 @@ public class MotifDetection {
         myVisionPortal = visionPortal;
         myApriltagProcessor = ATagProcess;
     }
+
     public static Integer readMotif(char side) { //Side is 'R' or 'B' red depot side or blue depot side NOT TEAM SIDES exception will be thrown otherwise.
         boolean trustRight;
         if (side == 'B') {

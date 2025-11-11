@@ -14,7 +14,7 @@ public class TeleOperatedMode extends LinearOpMode {
     private Robot bot;
     public void runOpMode() {
         bot = new Robot(hardwareMap);
-        bot.checkVoltage();
+        //bot.checkVoltage();
         runtime = new ElapsedTime();
         double gamepad1AbtnCooldown = -1.0;
         double gamepad1XbtnCooldown = -1.0;
@@ -40,8 +40,10 @@ public class TeleOperatedMode extends LinearOpMode {
                     gamepad1AbtnCooldown = runtime.seconds();
                 }
             }
-            if (gamepad2.bWasReleased()) {
+            if (gamepad2.b) {
                 bot.launch();
+            } else if (gamepad2.bWasReleased()) {
+                bot.block();
             }
             if (gamepad2.xWasReleased()) {
                 bot.intake();

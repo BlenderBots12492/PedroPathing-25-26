@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.vision;
 
 public class Motif {
     public boolean[] pattern;
+
+    //function to define the motif for latter
     public Motif(int ID) {
         switch (ID%20) {
             case 1:

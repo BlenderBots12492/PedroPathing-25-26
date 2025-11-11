@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.vision;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+import static java.lang.Math.toRadians;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,11 +26,11 @@ public class Camera {
     public static MotifDetection MotifDetector;
     public DepotScan robotLocator;
     private Position cameraPosition = new Position(DistanceUnit.INCH,
-            4.06, 7.053, 3.67, 0);
-    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
-            0, -75, 0, 0);
+            4.06, 7.5, 3.67, 0);
+    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.RADIANS,
+            0, toRadians(-75), 0, 0);
 
-    public Camera(HardwareMap hardwareMap) {
+    public Camera(HardwareMap hardwareMap) { // initialize vision portal, and april tag processes
         myVisionPortalBuilder = new VisionPortal.Builder();
         myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();

@@ -32,6 +32,8 @@ public class DepotScan {
     }
 
     @Nullable
+
+    //use april tages to determin bot location
     public static AprilTagDetection search_for_depot(){
         int[] DepotIds = {20, 24};
         myAprilTagDetections = (myApriltagProcessor.getDetections());
@@ -54,6 +56,7 @@ public class DepotScan {
         myApriltagProcessor = ATagProcess;
     }
     private static Pose3D averagePose3D(Pose3D A, Pose3D B) {
+        //define bot's positions
         Position APos = A.getPosition();
         Position BPos = B.getPosition();
         if (APos.unit != BPos.unit) {
@@ -65,10 +68,12 @@ public class DepotScan {
                 (APos.z+BPos.z)/2,
                 APos.acquisitionTime);
 
+        //send out the data we found to the main section
         return new Pose3D(AvgPos, A.getOrientation());
     }
     public Pose3D findPos(Pose3D position) {
         AprilTagDetection depot = search_for_depot();
+        //if we found the robot pos then using it
         if (depot != null) {
             return depot.robotPose;
         } else {
